@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,7 +6,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
@@ -31,17 +31,17 @@ export default function ChangePasswordScreen() {
 
   const handleChangePassword = async () => {
     if (!currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()) {
-      Alert.alert('Atenção', 'Preencha todos os campos');
+      Alert.alert('AtenÃ§Ã£o', 'Preencha todos os campos');
       return;
     }
 
     if (newPassword.length < 6) {
-      Alert.alert('Atenção', 'A nova senha deve ter no mínimo 6 caracteres');
+      Alert.alert('AtenÃ§Ã£o', 'A nova senha deve ter no mÃ­nimo 6 caracteres');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert('Atenção', 'As senhas não coincidem');
+      Alert.alert('AtenÃ§Ã£o', 'As senhas nÃ£o coincidem');
       return;
     }
 
@@ -102,7 +102,7 @@ export default function ChangePasswordScreen() {
 
             <Text style={styles.subtitle}>Defina uma nova senha</Text>
             <Text style={styles.description}>
-              Escolha uma senha segura com no mínimo 6 caracteres
+              Escolha uma senha segura com no mÃ­nimo 6 caracteres
             </Text>
 
             <View style={styles.inputContainer}>
@@ -297,3 +297,5 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.9)',
   },
 });
+
+

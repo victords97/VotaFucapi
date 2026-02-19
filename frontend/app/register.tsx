@@ -16,7 +16,7 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 const BACKEND_URL = EXPO_PUBLIC_BACKEND_URL?.replace(/\/+$/, '');
 
 export default function RegisterScreen() {
@@ -472,5 +472,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+
 
 

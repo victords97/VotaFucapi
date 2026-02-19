@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 const BACKEND_URL = EXPO_PUBLIC_BACKEND_URL?.replace(/\/+$/, '');
 
 export default function AdminLoginScreen() {
@@ -223,3 +223,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+

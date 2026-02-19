@@ -6,7 +6,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 const { width } = Dimensions.get('window');
 
 interface TurmaResult {
@@ -561,6 +561,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+
 
 
 

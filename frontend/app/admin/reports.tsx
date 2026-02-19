@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,7 +6,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 
 export default function ReportsScreen() {
   const router = useRouter();
@@ -70,7 +70,7 @@ export default function ReportsScreen() {
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Relatórios</Text>
+          <Text style={styles.headerTitle}>RelatÃ³rios</Text>
           <View style={{ width: 40 }} />
         </View>
       </LinearGradient>
@@ -86,7 +86,7 @@ export default function ReportsScreen() {
           <View style={[styles.card, { backgroundColor: '#667eea' }]}>
             <Ionicons name="people" size={40} color="#fff" />
             <Text style={styles.cardNumber}>{data?.total_usuarios || 0}</Text>
-            <Text style={styles.cardLabel}>Usuários Cadastrados</Text>
+            <Text style={styles.cardLabel}>UsuÃ¡rios Cadastrados</Text>
           </View>
 
           <View style={[styles.card, { backgroundColor: '#10b981' }]}>
@@ -96,10 +96,10 @@ export default function ReportsScreen() {
           </View>
         </View>
 
-        {/* Horário de Pico */}
+        {/* HorÃ¡rio de Pico */}
         {data?.horario_pico && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>⏰ Horário de Pico</Text>
+            <Text style={styles.sectionTitle}>â° HorÃ¡rio de Pico</Text>
             <View style={styles.peakCard}>
               <Ionicons name="trending-up" size={32} color="#f59e0b" />
               <View style={styles.peakInfo}>
@@ -113,7 +113,7 @@ export default function ReportsScreen() {
         {/* Votos por Hora */}
         {data?.votos_por_hora && data.votos_por_hora.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📊 Votos por Horário</Text>
+            <Text style={styles.sectionTitle}>ðŸ“Š Votos por HorÃ¡rio</Text>
             {data.votos_por_hora.map((item: any) => (
               <View key={item._id} style={styles.hourRow}>
                 <Text style={styles.hourLabel}>{formatHora(item._id)}</Text>
@@ -134,11 +134,11 @@ export default function ReportsScreen() {
         {/* Top Projetos */}
         {data?.top_projetos && data.top_projetos.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🏆 Top 5 Projetos</Text>
+            <Text style={styles.sectionTitle}>ðŸ† Top 5 Projetos</Text>
             {data.top_projetos.map((projeto: any, index: number) => (
               <View key={projeto._id} style={styles.projectRow}>
                 <View style={[styles.rankBadge, index === 0 && styles.firstPlace]}>
-                  <Text style={styles.rankText}>{index + 1}º</Text>
+                  <Text style={styles.rankText}>{index + 1}Âº</Text>
                 </View>
                 <View style={styles.projectInfo}>
                   <Text style={styles.projectName}>{projeto.nome_projeto}</Text>
@@ -343,3 +343,5 @@ const styles = StyleSheet.create({
     color: '#10b981',
   },
 });
+
+

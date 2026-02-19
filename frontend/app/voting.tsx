@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
 
@@ -118,12 +118,12 @@ export default function VotingScreen() {
     return (
       <View style={styles.emptyContainer}>
         <Ionicons name="folder-open-outline" size={64} color="#ccc" />
-        <Text style={styles.emptyText}>Nenhum projeto disponível</Text>
+        <Text style={styles.emptyText}>Nenhum projeto disponÃ­vel</Text>
         <TouchableOpacity
           style={styles.backHomeButton}
           onPress={() => router.push('/')}
         >
-          <Text style={styles.backHomeButtonText}>Voltar ao Início</Text>
+          <Text style={styles.backHomeButtonText}>Voltar ao InÃ­cio</Text>
         </TouchableOpacity>
       </View>
     );
@@ -302,3 +302,5 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 });
+
+

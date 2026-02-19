@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Alert, Modal, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
 
 interface Turma {
   _id: string;
@@ -61,7 +61,7 @@ export default function AdminTurmasScreen() {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      Alert.alert('Permissão Negada', 'É necessário permitir acesso à galeria');
+      Alert.alert('PermissÃ£o Negada', 'Ã‰ necessÃ¡rio permitir acesso Ã  galeria');
       return;
     }
 
@@ -80,12 +80,12 @@ export default function AdminTurmasScreen() {
 
   const handleCreateTurma = async () => {
     if (!nomeTurma.trim() || !nomeProjeto.trim() || !numeroBarraca.trim()) {
-      Alert.alert('Atenção', 'Preencha todos os campos');
+      Alert.alert('AtenÃ§Ã£o', 'Preencha todos os campos');
       return;
     }
 
     if (!fotoBase64) {
-      Alert.alert('Atenção', 'Selecione uma foto do projeto');
+      Alert.alert('AtenÃ§Ã£o', 'Selecione uma foto do projeto');
       return;
     }
 
@@ -135,7 +135,7 @@ export default function AdminTurmasScreen() {
 
   const handleDeleteTurma = (turmaId: string, nomeTurma: string) => {
     Alert.alert(
-      'Confirmar Exclusão',
+      'Confirmar ExclusÃ£o',
       `Deseja realmente excluir "${nomeTurma}"?`,
       [
         { text: 'Cancelar', style: 'cancel' },
@@ -145,7 +145,7 @@ export default function AdminTurmasScreen() {
           onPress: async () => {
             try {
               await axios.delete(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/turmas/${turmaId}`);
-              Alert.alert('Sucesso', 'Turma excluída com sucesso!');
+              Alert.alert('Sucesso', 'Turma excluÃ­da com sucesso!');
               loadTurmas();
             } catch (error) {
               console.error('Error deleting turma:', error);
@@ -273,7 +273,7 @@ export default function AdminTurmasScreen() {
 
               <TextInput
                 style={styles.input}
-                placeholder="Número da Barraca"
+                placeholder="NÃºmero da Barraca"
                 value={numeroBarraca}
                 onChangeText={setNumeroBarraca}
                 keyboardType="numeric"
@@ -286,7 +286,7 @@ export default function AdminTurmasScreen() {
               >
                 <Ionicons name="image-outline" size={24} color="#667eea" />
                 <Text style={styles.imagePickerText}>
-                  {fotoBase64 ? 'Foto Selecionada ✓' : 'Selecionar Foto do Projeto'}
+                  {fotoBase64 ? 'Foto Selecionada âœ“' : 'Selecionar Foto do Projeto'}
                 </Text>
               </TouchableOpacity>
 
@@ -506,3 +506,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+

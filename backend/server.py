@@ -320,25 +320,35 @@ async def verify_face(request: FaceVerifyRequest):
         # Check if we have a good match with balanced threshold
         # For Facenet with cosine distance, threshold is typically 0.4
         # Strict threshold: accept if distance < 0.13
-        STRICT_THRESHOLD = 0.13
+        STRICT_THRESHOLD = 0.14
+        RELAXED_VERIFIED_THRESHOLD = 0.18
         
-        if best_match and best_match[2] < STRICT_THRESHOLD:
-            usuario = best_match[0]
-            logger.info(f"âœ“ MATCH FOUND: {usuario['nome']} with distance {best_match[2]:.4f} (threshold: {STRICT_THRESHOLD})")
-            return {
-                "found": True,
-                "usuario": {
-                    "id": str(usuario['_id']),
-                    "nome": usuario['nome'],
-                    "cpf": usuario['cpf'],
-                    "telefone": usuario['telefone'],
-                    "ja_votou": usuario.get('ja_votou', False)
+        if best_match:
+            usuario, verified, distance = best_match
+            is_match = (distance < STRICT_THRESHOLD) or (verified and distance < RELAXED_VERIFIED_THRESHOLD)
+
+            if is_match:
+                logger.info(
+                    f"MATCH FOUND: {usuario['nome']} with distance {distance:.4f} "
+                    f"(strict={STRICT_THRESHOLD}, relaxed_verified={RELAXED_VERIFIED_THRESHOLD}, verified={verified})"
+                )
+                return {
+                    "found": True,
+                    "usuario": {
+                        "id": str(usuario['_id']),
+                        "nome": usuario['nome'],
+                        "cpf": usuario['cpf'],
+                        "telefone": usuario['telefone'],
+                        "ja_votou": usuario.get('ja_votou', False)
+                    }
                 }
-            }
-        elif best_match:
-            logger.info(f"âœ— NO MATCH: Best was {best_match[0]['nome']} with distance {best_match[2]:.4f}, but threshold is {STRICT_THRESHOLD}")
+
+            logger.info(
+                f"NO MATCH: Best was {usuario['nome']} with distance {distance:.4f} "
+                f"(strict={STRICT_THRESHOLD}, relaxed_verified={RELAXED_VERIFIED_THRESHOLD}, verified={verified})"
+            )
         else:
-            logger.info("âœ— NO MATCH: No faces could be compared")
+            logger.info("NO MATCH: No faces could be compared")
         
         return {"found": False, "message": "Rosto nÃ£o encontrado"}
         
@@ -633,4 +643,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+
+
 
