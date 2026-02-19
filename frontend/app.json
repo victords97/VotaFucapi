@@ -1,0 +1,76 @@
+﻿{
+    "expo":  {
+                 "name":  "VotaçãoFucapi",
+                 "slug":  "frontend",
+                 "version":  "1.0.0",
+                 "orientation":  "portrait",
+                 "icon":  "./assets/images/icon-fucapi.png",
+                 "scheme":  "frontend",
+                 "userInterfaceStyle":  "automatic",
+                 "newArchEnabled":  true,
+                 "ios":  {
+                             "supportsTablet":  true,
+                             "infoPlist":  {
+                                               "NSCameraUsageDescription":  "Capture sua foto para votação",
+                                               "NSPhotoLibraryUsageDescription":  "Selecione fotos de projetos",
+                                               "NSMicrophoneUsageDescription":  "Acesso ao microfone não é necessário"
+                                           }
+                         },
+                 "android":  {
+                                 "adaptiveIcon":  {
+                                                      "foregroundImage":  "./assets/images/adaptive-icon-fucapi.png",
+                                                      "backgroundColor":  "#000000"
+                                                  },
+                                 "edgeToEdgeEnabled":  true,
+                                 "permissions":  [
+                                                     "android.permission.CAMERA",
+                                                     "android.permission.READ_EXTERNAL_STORAGE",
+                                                     "android.permission.WRITE_EXTERNAL_STORAGE",
+                                                     "android.permission.READ_MEDIA_IMAGES",
+                                                     "android.permission.RECORD_AUDIO"
+                                                 ],
+                                 "package":  "votacao.fucapi",
+                                 "usesCleartextTraffic":  true
+                             },
+                 "web":  {
+                             "bundler":  "metro",
+                             "output":  "static",
+                             "favicon":  "./assets/images/icon-fucapi.png"
+                         },
+                 "plugins":  [
+                                 "expo-router",
+                                 [
+                                     "expo-splash-screen",
+                                     {
+                                         "image":  "./assets/images/splash-image.png",
+                                         "imageWidth":  200,
+                                         "resizeMode":  "contain",
+                                         "backgroundColor":  "#000000"
+                                     }
+                                 ],
+                                 [
+                                     "expo-camera",
+                                     {
+                                         "cameraPermission":  "Capture sua foto para votação"
+                                     }
+                                 ],
+                                 [
+                                     "expo-image-picker",
+                                     {
+                                         "photosPermission":  "Selecione fotos de projetos"
+                                     }
+                                 ]
+                             ],
+                 "experiments":  {
+                                     "typedRoutes":  true
+                                 },
+                 "extra":  {
+                               "router":  {
+
+                                          },
+                               "eas":  {
+                                           "projectId":  "131037fa-a5ae-4e52-8ef1-574f4268ea0e"
+                                       }
+                           }
+             }
+}

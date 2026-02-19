@@ -1,0 +1,26 @@
+﻿{
+    "cli":  {
+                "version":  "\u003e= 18.0.1",
+                "appVersionSource":  "remote"
+            },
+    "build":  {
+                  "development":  {
+                                      "developmentClient":  true,
+                                      "distribution":  "internal"
+                                  },
+                  "preview":  {
+                                  "distribution":  "internal",
+                                  "env":  {
+                                              "EXPO_PUBLIC_BACKEND_URL":  "http://192.168.100.100:8001"
+                                          }
+                              },
+                  "production":  {
+                                     "autoIncrement":  true
+                                 }
+              },
+    "submit":  {
+                   "production":  {
+
+                                  }
+               }
+}
