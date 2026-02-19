@@ -13,10 +13,17 @@ export default function AdminLoginScreen() {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
+    setErrorMessage('');
+
     if (!password.trim()) {
-      Alert.alert('Atenção', 'Digite a senha');
+      const message = 'Digite a senha';
+      setErrorMessage(message);
+      if (Platform.OS !== 'web') {
+        Alert.alert('Atenção', message);
+      }
       return;
     }
 
@@ -42,7 +49,10 @@ export default function AdminLoginScreen() {
       const message = error.response?.data?.detail || error.message || 'Falha na conexão';
       const isNetworkError = !error.response;
       const details = isNetworkError ? `\n\nURL backend: ${BACKEND_URL || '(não configurada)'}` : '';
-      Alert.alert('Erro', message + details);
+      setErrorMessage(message);
+      if (Platform.OS !== 'web') {
+        Alert.alert('Erro', message + details);
+      }
     } finally {
       setLoading(false);
     }
@@ -80,12 +90,21 @@ export default function AdminLoginScreen() {
                 style={styles.input}
                 placeholder="Senha de Administrador"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(value) => {
+                  setPassword(value);
+                  if (errorMessage) {
+                    setErrorMessage('');
+                  }
+                }}
                 secureTextEntry
                 placeholderTextColor="#999"
                 onSubmitEditing={handleLogin}
               />
             </View>
+
+            {!!errorMessage && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
 
             <TouchableOpacity
               style={[styles.button, loading && styles.buttonDisabled]}
@@ -114,6 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   backButton: {
     position: 'absolute',
@@ -129,6 +149,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
     marginBottom: 48,
+    width: '100%',
+    maxWidth: 440,
   },
   iconContainer: {
     width: 120,
@@ -157,6 +179,8 @@ const styles = StyleSheet.create({
     padding: 24,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
+    width: '100%',
+    maxWidth: 440,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -168,6 +192,12 @@ const styles = StyleSheet.create({
     height: 56,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
+  },
+  errorText: {
+    color: '#fca5a5',
+    marginBottom: 14,
+    marginTop: -6,
+    fontSize: 14,
   },
   inputIcon: {
     marginRight: 12,

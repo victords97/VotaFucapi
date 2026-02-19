@@ -1,0 +1,14 @@
+﻿# Include only the frontend app in EAS uploads
+*
+!frontend/
+!frontend/**
+
+# Still ignore generated/cached folders inside frontend
+frontend/node_modules/
+frontend/.expo/
+frontend/.metro/
+frontend/.metro-cache/
+frontend/android/
+frontend/ios/
+frontend/dist/
+frontend/web-build/

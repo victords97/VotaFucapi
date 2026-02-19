@@ -56,12 +56,15 @@ class Usuario(BaseModel):
     face_image: str  # base64 encoded image
     ja_votou: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    lgpd_aceito: bool = False
+    lgpd_aceito_em: Optional[datetime] = None
 
 class UsuarioCadastro(BaseModel):
     nome: str
     cpf: str
     telefone: str
     face_image: str
+    lgpd_aceito: bool
 
 class Turma(BaseModel):
     nome_turma: str
@@ -115,6 +118,48 @@ def save_temp_image(img_array):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg')
     cv2.imwrite(temp_file.name, img_array)
     return temp_file.name
+
+# Helper function to check if an image contains at least one detectable face
+def has_detectable_face(img_array, image_path: str) -> bool:
+    try:
+        gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
+        gray = cv2.equalizeHist(gray)
+
+        cascade_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+        face_cascade = cv2.CascadeClassifier(cascade_path)
+
+        if not face_cascade.empty():
+            faces = face_cascade.detectMultiScale(
+                gray,
+                scaleFactor=1.05,
+                minNeighbors=4,
+                minSize=(60, 60),
+            )
+            if len(faces) > 0:
+                return True
+
+        # Fallback detector: less strict than enforce_detection=True
+        extracted_faces = DeepFace.extract_faces(
+            img_path=image_path,
+            detector_backend="opencv",
+            enforce_detection=False,
+            align=True,
+        )
+
+        for face in extracted_faces:
+            area = face.get("facial_area") or {}
+            confidence = float(face.get("confidence") or 0.0)
+            width = int(area.get("w") or 0)
+            height = int(area.get("h") or 0)
+
+            if confidence >= 0.20 and width >= 40 and height >= 40:
+                return True
+
+        return False
+    except Exception as e:
+        logger.error(f"Error detecting face presence: {e}")
+        return False
+
 
 # Helper function to hash password
 def hash_password(password: str) -> str:
@@ -210,10 +255,17 @@ async def verify_face(request: FaceVerifyRequest):
         query_img = base64_to_image(request.face_image)
         if query_img is None:
             raise HTTPException(status_code=400, detail="Invalid image format")
-        
+
         # Save query image temporarily
         query_path = save_temp_image(query_img)
-        
+        # If no face is detected, user must retry capture.
+        if not has_detectable_face(query_img, query_path):
+            os.unlink(query_path)
+            raise HTTPException(
+                status_code=400,
+                detail="Nenhum rosto detectado. Posicione seu rosto na moldura e tente novamente.",
+            )
+
         # Get all users from database
         usuarios = await db.usuarios.find().to_list(1000)
         
@@ -300,6 +352,9 @@ async def register_user(usuario: UsuarioCadastro):
     try:
         logger.info(f"Registering user: {usuario.nome}")
         
+        if not usuario.lgpd_aceito:
+            raise HTTPException(status_code=400, detail="Aceite do termo LGPD e obrigatorio")
+
         # Check if CPF already exists
         existing = await db.usuarios.find_one({"cpf": usuario.cpf})
         if existing:
@@ -314,6 +369,7 @@ async def register_user(usuario: UsuarioCadastro):
         usuario_dict = usuario.dict()
         usuario_dict['ja_votou'] = False
         usuario_dict['created_at'] = datetime.utcnow()
+        usuario_dict['lgpd_aceito_em'] = datetime.utcnow()
         
         result = await db.usuarios.insert_one(usuario_dict)
         
