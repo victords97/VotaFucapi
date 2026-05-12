@@ -1,3 +1,7 @@
+param(
+  [int]$Workers = 2
+)
+
 $ErrorActionPreference = "Stop"
 
 $pythonExe = $null
@@ -28,4 +32,14 @@ if (-not (Test-PythonExecutable $pythonExe)) {
   throw "Python nao encontrado ou indisponivel no PATH. Instale Python 3.11+ e tente novamente."
 }
 
-& $pythonExe -m uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+if ($Workers -lt 1) {
+  throw "Workers deve ser maior ou igual a 1."
+}
+
+Write-Host "Iniciando backend para teste em rede local..."
+Write-Host "Host: 0.0.0.0"
+Write-Host "Porta: 8001"
+Write-Host "Workers: $Workers"
+Write-Host "Observacao: este modo nao usa --reload."
+
+& $pythonExe -m uvicorn server:app --host 0.0.0.0 --port 8001 --workers $Workers

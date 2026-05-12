@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,8 +16,7 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
-const BACKEND_URL = EXPO_PUBLIC_BACKEND_URL?.replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -87,7 +86,7 @@ export default function RegisterScreen() {
       setLoading(true);
 
       if (!BACKEND_URL) {
-        throw new Error('EXPO_PUBLIC_BACKEND_URL não configurada');
+        throw new Error('BACKEND_URL não configurada');
       }
 
       const response = await axios.post(
@@ -103,23 +102,32 @@ export default function RegisterScreen() {
       );
 
       if (response.data.success) {
-        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!', [
-          {
-            text: 'OK',
-            onPress: () => {
-              router.push({
-                pathname: '/voting',
-                params: { usuario_id: response.data.usuario_id },
-              });
+        const goToVoting = () => {
+          router.push({
+            pathname: '/voting',
+            params: { usuario_id: response.data.usuario_id },
+          });
+        };
+
+        if (Platform.OS === 'web') {
+          window.alert('Sucesso\n\nCadastro realizado com sucesso!');
+          goToVoting();
+        } else {
+          Alert.alert('Sucesso', 'Cadastro realizado com sucesso!', [
+            {
+              text: 'OK',
+              onPress: goToVoting,
             },
-          },
-        ]);
+          ]);
+        }
       }
     } catch (error: any) {
       console.error('Error registering:', error);
       const message = error.response?.data?.detail || error.message || 'Erro ao cadastrar. Tente novamente.';
       setFormError(message);
-      if (Platform.OS !== 'web') {
+      if (Platform.OS === 'web') {
+        window.alert(`Erro\n\n${message}`);
+      } else {
         Alert.alert('Erro', message);
       }
     } finally {
@@ -472,7 +480,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-
-
-
-

@@ -1,12 +1,12 @@
-﻿import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Dimensions, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Dimensions, ActivityIndicator, Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 const { width } = Dimensions.get('window');
 
 interface TurmaResult {
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
     try {
       if (!silent) setLoading(true);
 
-      const response = await axios.get(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/results`);
+      const response = await axios.get(`${BACKEND_URL}/api/admin/results`);
       setTotalVotos(response.data.total_votos);
       setResults(response.data.turmas);
     } catch (error) {
@@ -74,35 +74,47 @@ export default function AdminDashboard() {
     try {
       setResetting(true);
       
-      const response = await axios.delete(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/reset-all`);
+      const response = await axios.delete(`${BACKEND_URL}/api/admin/reset-all`);
       
       if (response.data.success) {
-        Alert.alert(
-          'Sistema Resetado!',
-          `Foram removidos:\n• ${response.data.deleted.usuarios} usuários\n• ${response.data.deleted.votos} votos\n• ${response.data.deleted.turmas} turmas`,
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                setShowResetModal(false);
-                loadResults();
-              },
-            },
-          ]
-        );
+        const successMessage = `Foram removidos:\n• ${response.data.deleted.usuarios} usuários\n• ${response.data.deleted.votos} votos\n• ${response.data.deleted.turmas} turmas`;
+        setShowResetModal(false);
+        loadResults();
+
+        if (Platform.OS === 'web') {
+          window.alert(`Sistema Resetado!\n\n${successMessage}`);
+        } else {
+          Alert.alert('Sistema Resetado!', successMessage);
+        }
       }
     } catch (error) {
       console.error('Error resetting system:', error);
-      Alert.alert('Erro', 'Erro ao resetar sistema');
+      if (Platform.OS === 'web') {
+        window.alert('Erro\n\nErro ao resetar sistema');
+      } else {
+        Alert.alert('Erro', 'Erro ao resetar sistema');
+      }
     } finally {
       setResetting(false);
     }
   };
 
   const confirmReset = () => {
+    const confirmMessage = 'Isso irá DELETAR PERMANENTEMENTE:\n\n• Todos os usuários cadastrados\n• Todos os votos registrados\n• Todas as turmas cadastradas\n\nEsta ação NÃO PODE ser desfeita!\n\nDeseja realmente continuar?';
+
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(confirmMessage);
+      if (!confirmed) {
+        setShowResetModal(false);
+        return;
+      }
+      handleResetSystem();
+      return;
+    }
+
     Alert.alert(
       '⚠️ ATENÇÃO: Ação Irreversível',
-      'Isso irá DELETAR PERMANENTEMENTE:\n\n• Todos os usuários cadastrados\n• Todos os votos registrados\n• Todas as turmas cadastradas\n\nEsta ação NÃO PODE ser desfeita!\n\nDeseja realmente continuar?',
+      confirmMessage,
       [
         {
           text: 'Cancelar',
@@ -561,8 +573,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-
-
-
-

@@ -41,6 +41,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 dump.rdb
+*.log
 
 # System files
 .DS_Store
@@ -75,9 +76,17 @@ agenthub/agents/youtube/db
 
 # Build caches
 .cache/
+.npm-cache/
 
 # Mobile development
 android-sdk/ -e 
+.expo/
+
+# Local HTTPS/dev artifacts
+.caddy.local.generated
+certs/
+expo-go-qr.png
+
 # Environment files
 *.env
 *.env.*

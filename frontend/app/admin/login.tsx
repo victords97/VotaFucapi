@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -6,8 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
-const BACKEND_URL = EXPO_PUBLIC_BACKEND_URL?.replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 
 export default function AdminLoginScreen() {
   const router = useRouter();
@@ -31,7 +30,7 @@ export default function AdminLoginScreen() {
 
     try {
       if (!BACKEND_URL) {
-        throw new Error('EXPO_PUBLIC_BACKEND_URL não configurada');
+        throw new Error('BACKEND_URL não configurada');
       }
 
       const response = await axios.post(
@@ -223,5 +222,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-

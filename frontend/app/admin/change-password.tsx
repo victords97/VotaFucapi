@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,7 +6,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function ChangePasswordScreen() {
     try {
       setLoading(true);
 
-      const response = await axios.post(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/change-password`, {
+      const response = await axios.post(`${BACKEND_URL}/api/admin/change-password`, {
         current_password: currentPassword,
         new_password: newPassword,
       });
@@ -297,5 +297,3 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.9)',
   },
 });
-
-

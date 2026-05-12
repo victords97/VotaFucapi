@@ -1,11 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
 
@@ -33,7 +33,7 @@ export default function VotingScreen() {
 
   const loadTurmas = async () => {
     try {
-      const response = await axios.get(`${EXPO_PUBLIC_BACKEND_URL}/api/turmas`);
+      const response = await axios.get(`${BACKEND_URL}/api/turmas`);
       setTurmas(response.data);
     } catch (error) {
       console.error('Error loading turmas:', error);
@@ -47,7 +47,7 @@ export default function VotingScreen() {
     try {
       setVoting(true);
 
-      const response = await axios.post(`${EXPO_PUBLIC_BACKEND_URL}/api/vote`, {
+      const response = await axios.post(`${BACKEND_URL}/api/vote`, {
         usuario_id: usuarioId,
         turma_id: turmaId,
       });
@@ -302,5 +302,3 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 });
-
-

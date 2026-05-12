@@ -1,0 +1,31 @@
+{
+    auto_https disable_redirects
+    log {
+        output stdout
+        format console
+    }
+}
+
+# Definição do servidor
+https://192.168.0.157, https://localhost {
+    tls internal
+    encode zstd gzip
+
+    # 1. API: Prioridade máxima
+    # Usamos o handle para garantir que nada mais tente processar a rota /api
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8001 {
+            # Melhora a comunicação com o FastAPI
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # 2. Frontend: Processa o resto
+    handle {
+        root * frontend/dist
+        file_server
+        # Necessário para SPAs (Vite/React/Vue) não darem 404 ao atualizar a página
+        try_files {path} /index.html
+    }
+}

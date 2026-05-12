@@ -1,12 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Dimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const router = useRouter();
+  const isStaticHtmlBuild = Platform.OS === 'web' && typeof window !== 'undefined' && window.location.pathname.endsWith('.html');
+
+  const goToCamera = () => {
+    if (isStaticHtmlBuild) {
+      window.location.href = '/camera.html';
+      return;
+    }
+    router.push('/camera');
+  };
+
+  const goToAdmin = () => {
+    if (isStaticHtmlBuild) {
+      window.location.href = '/admin/login.html';
+      return;
+    }
+    router.push('/admin/login');
+  };
 
   return (
     <ImageBackground
@@ -27,7 +44,7 @@ export default function HomeScreen() {
           
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.push('/camera')}
+            onPress={goToCamera}
             activeOpacity={0.8}
           >
             <LinearGradient
@@ -42,7 +59,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={styles.adminButton}
-            onPress={() => router.push('/admin/login')}
+            onPress={goToAdmin}
             activeOpacity={0.7}
           >
             <Text style={styles.adminButtonText}>Painel Administrativo</Text>

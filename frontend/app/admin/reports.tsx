@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,7 +6,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 
 export default function ReportsScreen() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function ReportsScreen() {
     try {
       if (!silent) setLoading(true);
 
-      const response = await axios.get(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/reports`);
+      const response = await axios.get(`${BACKEND_URL}/api/admin/reports`);
       setData(response.data);
     } catch (error) {
       console.error('Error loading reports:', error);
@@ -343,5 +343,3 @@ const styles = StyleSheet.create({
     color: '#10b981',
   },
 });
-
-

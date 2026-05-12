@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Alert, Modal, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const EXPO_PUBLIC_BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL || 'http://192.168.100.100:8001').replace(/\/+$/, '');
+import { BACKEND_URL } from '@/utils/backend';
 
 interface Turma {
   _id: string;
@@ -47,7 +47,7 @@ export default function AdminTurmasScreen() {
   const loadTurmas = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/turmas`);
+      const response = await axios.get(`${BACKEND_URL}/api/admin/turmas`);
       setTurmas(response.data);
     } catch (error) {
       console.error('Error loading turmas:', error);
@@ -94,7 +94,7 @@ export default function AdminTurmasScreen() {
 
       if (editingId) {
         // Update existing turma
-        await axios.put(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/turmas/${editingId}`, {
+        await axios.put(`${BACKEND_URL}/api/admin/turmas/${editingId}`, {
           nome_turma: nomeTurma.trim(),
           nome_projeto: nomeProjeto.trim(),
           numero_barraca: numeroBarraca.trim(),
@@ -103,7 +103,7 @@ export default function AdminTurmasScreen() {
         Alert.alert('Sucesso', 'Turma atualizada com sucesso!');
       } else {
         // Create new turma
-        await axios.post(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/turmas`, {
+        await axios.post(`${BACKEND_URL}/api/admin/turmas`, {
           nome_turma: nomeTurma.trim(),
           nome_projeto: nomeProjeto.trim(),
           numero_barraca: numeroBarraca.trim(),
@@ -144,7 +144,7 @@ export default function AdminTurmasScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await axios.delete(`${EXPO_PUBLIC_BACKEND_URL}/api/admin/turmas/${turmaId}`);
+              await axios.delete(`${BACKEND_URL}/api/admin/turmas/${turmaId}`);
               Alert.alert('Sucesso', 'Turma excluÃ­da com sucesso!');
               loadTurmas();
             } catch (error) {
@@ -506,5 +506,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-
